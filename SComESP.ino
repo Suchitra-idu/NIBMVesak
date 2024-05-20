@@ -17,7 +17,7 @@ int relay10 = 15; // D15
 int relay11 = 2; // D2
 int relay12 = 4; // D4
 
-bool sRelay[] = {false, false, false, false, false, false}
+bool sRelay[] = {false, false, false, false, false, false};
 
 void setup() {
   // Set pin modes
@@ -36,37 +36,37 @@ void setup() {
 
   SerialBT.begin("Childs Top Light System");
   Serial.begin(115200);
-  SerialArduino.begin(9600, SERIAL_8N1, RXp2, TXp2); // Get data from Arduino
+  Serial1.begin(9600, SERIAL_8N1, RXp2, TXp2); // Get data from Arduino
   turnEverythingOn();
 }
 
 void loop() {
   // Takes status of relays of Arduino
   if (Serial.available()) {
-    String message = SerialArduino.readString();
-    if (messages == "Trelay1") {
+    String message = Serial1.readString();
+    if (message == "Trelay1") {
       sRelay[0] = true;
-    } else if (messages == "Frelay1") {
+    } else if (message == "Frelay1") {
       sRelay[0] = false;
-    } else if (messages == "Trelay2") {
+    } else if (message == "Trelay2") {
       sRelay[1] = true;
-    } else if (messages == "Frelay2") {
+    } else if (message == "Frelay2") {
       sRelay[1] = false;
-    } else if (messages == "Trelay3") {
+    } else if (message == "Trelay3") {
       sRelay[2] = true;
-    } else if (messages == "Frelay3") {
+    } else if (message == "Frelay3") {
       sRelay[2] = false;
-    } else if (messages == "Trelay4") {
+    } else if (message == "Trelay4") {
       sRelay[3] = true;
-    } else if (messages == "Frelay4") {
+    } else if (message == "Frelay4") {
       sRelay[3] = false;
-    } else if (messages == "Trelay5") {
+    } else if (message == "Trelay5") {
       sRelay[4] = true;
-    } else if (messages == "Frelay5") {
+    } else if (message == "Frelay5") {
       sRelay[4] = false;
-    } else if (messages == "Trelay6") {
+    } else if (message == "Trelay6") {
       sRelay[5] = true;
-    } else if (messages == "Frelay6") {
+    } else if (message == "Frelay6") {
       sRelay[5] = false;
     }
   }
@@ -117,7 +117,7 @@ void suchiPattern(){
 }
 
 void wavePattern() {
-  Serial.printlln("Wave Pattern");
+  Serial.println("Wave Pattern");
 
   int delayTime = 1000;
   int relays[] = {relay1, relay2, relay3, relay4, relay5, relay6, relay7, relay8, relay9, relay10, relay11, relay12}; // array of relays
