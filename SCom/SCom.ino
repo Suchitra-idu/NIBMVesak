@@ -1,34 +1,42 @@
 #include <SoftwareSerial.h>
 
 
-SoftwareSerial SerialBT(10, 11); // RX, TX
+SoftwareSerial SerialBT(0, 1); // RX, TX
 
-int relay1 = 2; // 
-int relay2 = 3; // 
-int relay3 = 4; // 
-int relay4 = 5; // 
-int relay5 = 6; // 
-int relay6 = 7; // 
-int relay7 = 8; // 
-int relay8 = 9; // 
-int relay9 = 10; // 
-int relay10 = 11; // 
-int relay11 = 12; // 
-int relay12 = 13; //
-int relay13 = 44; // 
-int relay14 = 45; //
-int relay15 = 46; // 
-int relay16 = 47; // 
-int relay17 = 48; //
-int relay18 = 49; // 
+int relay1 = 3; // Orange 8 Board
+int relay2 = 2; // Red 8 Board
+int relay3 = 10; // 1 16 Board
+int relay4 = 11; // 2 16 Board
+int relay5 = 12; // 3 16 Board 
+int relay6 = 13; // 4 16 Board
+int relay7 = 14; // 5 16 Board
+int relay8 = 15; // 6 16 Board
+int relay9 = 16; // 7 16 Board
+int relay10 = 17; // 8 16 Board
+int relay11 = 18; // 9 16 Board
+int relay12 = 19; // 10 16 Board
+int relay13 = 20; // 12 16 Board
+int relay14 = 21; // 11 16 Board
+int relay15 = 22; // 14 16 Board
+int relay16 = 24; // 13 16 Board
+int relay17 = 26; // 16 16 Board
+int relay18 = 28; // 15 16 Board
+// Parent Lanterns
+int relay19 = 9; // White 8 board
+int relay20 = 8; // Gray 8 board
+int relay21 = 7; // Purple 8 board
+int relay22 = 6; // Blue 8 board
+int relay23 = 5; // Green 8 board
+int relay24 = 4; // Yellow 8 board
 
 
 unsigned long previousMillis = 0; // will store the last time the pattern was changed
-const long interval = 0.5 * 60 * 1000; // interval to change pattern (2 minutes)
+const long interval = 2 * 60 * 1000; // interval to change pattern (2 minutes)
 
+int relays[] = {relay1, relay2, relay3, relay4,relay5, relay6, relay7, relay8,relay9, relay10, relay11, relay12,relay13, relay14, relay15,relay16, relay17, relay18};
+int relaysParent[] = {relay19, relay20, relay21, relay22, relay23, relay24};
 
 char currentPattern = '1'; // default pattern
-int relays[] = {relay1, relay2, relay3, relay4,relay5, relay6, relay7, relay8,relay9, relay10, relay11, relay12,relay13, relay14, relay15,relay16, relay17, relay18};
 
 void setup() {
   pinMode(relay1, OUTPUT);
@@ -49,6 +57,12 @@ void setup() {
   pinMode(relay16, OUTPUT);
   pinMode(relay17, OUTPUT);
   pinMode(relay18, OUTPUT);
+  pinMode(relay19, OUTPUT);
+  pinMode(relay20, OUTPUT);
+  pinMode(relay21, OUTPUT);
+  pinMode(relay22, OUTPUT);
+  pinMode(relay23, OUTPUT);
+  pinMode(relay24, OUTPUT);
 
   SerialBT.begin(9600); //Start Bluetooth service
   Serial.begin(9600);
@@ -65,40 +79,34 @@ void loop() {
   
   if (SerialBT.available()) {
     char c = SerialBT.read();
-    Serial.println(c);
-    if (c >= '1' && c <= '4') { // check if the received command is valid
-      currentPattern = c; // update the current pattern
-      previousMillis = currentMillis; // reset the timer
-    }
+    currentPattern = c; // update the current pattern
+    previousMillis = currentMillis; // reset the timer
   }
 
 
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
     currentPattern++; // change the pattern
-    if (currentPattern > '4') currentPattern = '1'; // reset to the first pattern
+    if (currentPattern > '9') currentPattern = '1'; // reset to the first pattern
   }
 
 
   switch (currentPattern) {
-    case '1':
-      patternRun();
-      break;
-    case '2':
-      wavePattern();
-      break;
-    case '3':
-      alternatePattern();
-      break;
-    case '4':
-      evenOddPattern();
-      break;
-    // Add more cases as needed
+    case '1': patternRun(); break;
+    case '2': wavePattern(); break;
+    case '3': alternatePattern(); break;
+    case '4': evenOddPattern(); break;
+    case '5': randomPattern(); break;
+    case '6': clockwiseRotationPattern(); break;
+    case '7': counterClockwiseRotationPattern(); break;
+    case '8': blinkingPairsPattern(); break;
+    case '9': alternatingHalvesPattern(); break;
   }
 }
+
 void patternRun(){
   Serial.println("Pattern Run");
-  int delayTime = 1000; // delay time in milliseconds
+  int delayTime = 200; // delay time in milliseconds
    // array of relays
   
   for (int i = 0; i < 18; i++) {
@@ -112,28 +120,16 @@ void patternRun(){
 
 void wavePattern(){
    Serial.println("Wave patton");
-  int delayTime = 1000;
+  int delayTime = 500;
   
 
   for (int i = 0; i < 18; i++) {
-      digitalWrite(relays[i], HIGH);
-    digitalWrite(relays[i+3], HIGH);
-    digitalWrite(relays[i+6], HIGH);
-    digitalWrite(relays[i+9], HIGH);
-    digitalWrite(relays[i+12], HIGH);
-    digitalWrite(relays[i+15], HIGH);
-    digitalWrite(relays[i+18], HIGH);
+    digitalWrite(relays[i], HIGH);
     delay(delayTime);
   }
 
   for (int i = 17; i >= 0; i--) {
     digitalWrite(relays[i], LOW);
-    digitalWrite(relays[i+3], LOW);
-    digitalWrite(relays[i+6], LOW);
-    digitalWrite(relays[i+9], LOW);
-    digitalWrite(relays[i+12], LOW);
-    digitalWrite(relays[i+15], LOW);
-    digitalWrite(relays[i+18], LOW);
     delay(delayTime);
   }
 }
@@ -182,11 +178,11 @@ void evenOddPattern(){
 
 void randomPattern(){
    Serial.println("Random patten");
-  int delayTime = 1000;
+  int delayTime = 150;
   
 
   for (int i = 0; i < 18; i++) {
-    int randomIndex = random(4);
+    int randomIndex = random(18);
     digitalWrite(relays[randomIndex], HIGH);
     delay(delayTime);
     digitalWrite(relays[randomIndex], LOW);
@@ -195,7 +191,7 @@ void randomPattern(){
 
 void clockwiseRotationPattern(){
    Serial.println("Clockwise Pattern");
-  int delayTime = 1000;
+  int delayTime = 750;
   
 
   for (int i = 0; i < 18; i++) {
@@ -207,8 +203,8 @@ void clockwiseRotationPattern(){
 
 void counterClockwiseRotationPattern(){
    Serial.println("CounterClock patten");
-  int delayTime = 1000;
-
+  int delayTime = 750;
+  
 
   for (int i = 17; i >= 0; i--) {
     digitalWrite(relays[i], HIGH);
@@ -220,9 +216,9 @@ void counterClockwiseRotationPattern(){
 void blinkingPairsPattern(){
    Serial.println("blinkingPairsPattern");
   int delayTime = 1000;
+  
 
-
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < 17; i++) {
     digitalWrite(relays[i], HIGH);
     digitalWrite(relays[(i + 2) % 18], HIGH);
     delay(delayTime);
@@ -234,21 +230,21 @@ void blinkingPairsPattern(){
 void alternatingHalvesPattern(){
    Serial.println("alternatingHalvesPattern");
   int delayTime = 1000;
+  
 
-
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i = 17; i++) {
     digitalWrite(relays[i], HIGH);
   }
   delay(delayTime);
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i = 17; i++) {
     digitalWrite(relays[i], LOW);
   }
 
-  for (int i = 2; i < 18; i++) {
+  for (int i = 17; i < 18; i++) {
     digitalWrite(relays[i], HIGH);
   }
   delay(delayTime);
-  for (int i = 2; i < 18; i++) {
+  for (int i = 17; i < 18; i++) {
     digitalWrite(relays[i], LOW);
   }
 }
